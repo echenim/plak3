@@ -24,13 +24,6 @@ func setupSwagger() {
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 }
 
-func setupRouter() *router.Router {
-	r := router.New()
-	r.GET("/{filepath:*}", fasthttpadaptor.NewFastHTTPHandlerFunc(httpSwagger.WrapHandler))
-	r.GET("/read", readHandler)
-	r.POST("/create", createUserHandler)
-	return r
-}
 
 func startServer(r *router.Router) {
 	address := ":8080"
