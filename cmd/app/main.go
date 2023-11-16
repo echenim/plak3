@@ -4,15 +4,15 @@ import (
 	"log"
 
 	"github.com/fasthttp/router"
-	"github.com/plak3com/plak3/docs"
+	"github.com/plak3com/plak3/cmd/app/docs"
+	h "github.com/plak3com/plak3/internal/handlers"
 	"github.com/valyala/fasthttp"
-	"github.com/valyala/fasthttp/fasthttpadaptor"
 )
 
 func main() {
 	setupSwagger()
 
-	r := setupRouter()
+	r := h.SetupRouter()
 
 	startServer(r)
 }
@@ -23,7 +23,6 @@ func setupSwagger() {
 	docs.SwaggerInfo.Version = "1.0.0-0"
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 }
-
 
 func startServer(r *router.Router) {
 	address := ":8080"
