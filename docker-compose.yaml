@@ -1,0 +1,15 @@
+version: "3.1"
+
+services:
+  db:
+    container_name: plak3-postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: freight-management-system
+      POSTGRES_USER: plak3-admin
+      POSTGRES_PASSWORD: 404N0Password@#$$Us3r
+    volumes:
+      - ./plak3-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
