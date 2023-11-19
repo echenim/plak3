@@ -47,3 +47,28 @@ now Set up configuration for database credentials, server port, etc., using a co
 Update your repositories and server start-up to use the provided configuration
 
 add authentication and authorization
+
+
+
+
+
+write a golang web user management application from scratch using fasthttp
+
+structure the crud application into
+cmd/app/main.go
+internal/handlers
+internal/models
+internal/repositories
+internal/services
+internal/routes
+
+
+Ensure each package is correctly initialized, especially the repository, services,handler, router and also include setup repository with the database connection
+
+use uber-go/dig as the dependency injection library
+
+
+
+curl -X POST -H "Content-Type: application/json" \
+    -d '{"name":"John", "email":"<john@example.com>"}' \
+    "<http://localhost:8080/searchUser>"

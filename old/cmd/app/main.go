@@ -6,10 +6,15 @@ import (
 	"github.com/fasthttp/router"
 	"github.com/plak3com/plak3/cmd/app/docs"
 	h "github.com/plak3com/plak3/internal/handlers"
+	"github.com/plak3com/plak3/internal/repositories"
 	"github.com/valyala/fasthttp"
+	"go.uber.org/dig"
 )
 
 func main() {
+	container := dig.New()
+	container.Provide(repositories.NewPlak3UserRepository)
+
 	setupSwagger()
 
 	r := h.SetupRouter()
