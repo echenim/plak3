@@ -4,7 +4,7 @@ your_project/
 ├── cmd/
 │   └── app/
 │       └── main.go
-├── internal/
+├── 
 │   ├── handlers/
 │   ├── models/
 │   ├── repositories/
@@ -56,11 +56,11 @@ write a golang web user management application from scratch using fasthttp
 
 structure the crud application into
 cmd/app/main.go
-internal/handlers
-internal/models
-internal/repositories
-internal/services
-internal/routes
+handlers
+models
+repositories
+services
+routes
 
 
 Ensure each package is correctly initialized, especially the repository, services,handler, router and also include setup repository with the database connection
@@ -72,3 +72,12 @@ use uber-go/dig as the dependency injection library
 curl -X POST -H "Content-Type: application/json" \
     -d '{"name":"John", "email":"<john@example.com>"}' \
     "<http://localhost:8080/searchUser>"
+
+
+
+
+
+
+Consider token expiration and renewal strategies
+
+You can expand upon this by adding more sophisticated user management, role-based access control, and other security features as needed

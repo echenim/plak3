@@ -1,9 +1,10 @@
-package models
+package entities
 
 import "time"
 
 type Plak3UserSignIn struct {
 	ID                       string     `json:"id"`
+	UserId                   int64      `json:"user_id"`
 	UserName                 string     `json:"userName"`
 	NormalizedUserName       string     `json:"normalizedUserName"`
 	Email                    string     `json:"email"`

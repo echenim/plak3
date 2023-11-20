@@ -7,10 +7,10 @@ import (
 )
 
 type Plak3UserSignInService struct {
-	repo repositories.Plak3UserSignInRepository
+	repo *repositories.Plak3UserSignInRepository
 }
 
-func NewPlak3UserSignInService(_repo repositories.Plak3UserSignInRepository) *Plak3UserSignInService {
+func NewPlak3UserSignInService(_repo *repositories.Plak3UserSignInRepository) *Plak3UserSignInService {
 	return &Plak3UserSignInService{repo: _repo}
 }
 

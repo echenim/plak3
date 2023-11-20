@@ -8,12 +8,12 @@ import (
 )
 
 type Server struct {
-	userHandler       handlers.Plak3UserHandlers
-	userSigninHandler handlers.Plak3UserSignInHandlers
+	userHandler       *handlers.Plak3UserHandlers
+	userSigninHandler *handlers.Plak3UserSignInHandlers
 }
 
-func NewUSerRoutes(_userHandler handlers.Plak3UserHandlers,
-	_userSigninHandler handlers.Plak3UserSignInHandlers,
+func NewRoutes(_userHandler *handlers.Plak3UserHandlers,
+	_userSigninHandler *handlers.Plak3UserSignInHandlers,
 ) *Server {
 	return &Server{
 		userHandler:       _userHandler,

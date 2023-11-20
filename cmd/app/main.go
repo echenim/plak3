@@ -3,24 +3,16 @@ package main
 import (
 	"log"
 
-	"github.com/plak3com/plak3/cmd/app/docs"
+	"github.com/plak3com/plak3/cmd/docs"
+	"github.com/plak3com/plak3/internal/handlers"
+	"github.com/plak3com/plak3/internal/repositories"
 	"github.com/plak3com/plak3/internal/routes"
+	"github.com/plak3com/plak3/internal/services"
 	"github.com/valyala/fasthttp"
+	"go.uber.org/dig"
 )
 
-// @title Swagger Example API
-// @version 1.0
-// @description This is a sample server celler server.
-// @termsOfService http://swagger.io/terms/
-
-// @contact.name API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
-
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-
-// @host localhost:9090
+// @host localhost:8080
 // @BasePath /api/v1
 // @query.collection.format multi
 
@@ -54,7 +46,26 @@ import (
 // @x-extension-openapi {"example": "value on a json format"}
 func main() {
 	setupSwagger()
-	container := buildContainer()
+	// container := &buildContainer()
+
+	container := dig.New()
+
+	// Provide the database connection
+
+	// Provide repositories
+	container.Provide(repositories.NewPlak3UserRepository)
+	container.Provide(repositories.NewPlak3UserSignInRepository)
+
+	// Provide services
+	container.Provide(services.NewPlak3UserService)
+	container.Provide(services.NewPlak3UserSignInService)
+
+	// Provide handler
+	container.Provide(handlers.NewPlak3UserHandlers)
+	container.Provide(handlers.NewPlak3UserSignInHandlers)
+
+	// Provide routes
+	container.Provide(routes.NewRoutes)
 
 	// Invoke the server start using the dependencies
 	err := container.Invoke(func(server *routes.Server) {
@@ -72,7 +83,7 @@ func main() {
 
 func setupSwagger() {
 	docs.SwaggerInfo.Title = "Freight Management System API Documentation"
-	docs.SwaggerInfo.Description = "This is a sample server using fasthttp and swagger"
-	docs.SwaggerInfo.Version = "1.0.0-0"
+	docs.SwaggerInfo.Description = "Freight Management System (FMS) API provides a suite of digital tools to efficiently manage and track freight operations."
+	docs.SwaggerInfo.Version = "1.0.0"
 	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 }

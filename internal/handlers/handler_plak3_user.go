@@ -3,17 +3,17 @@ package handlers
 import (
 	"encoding/json"
 
-	"github.com/plak3com/plak3/internal/models"
+	"github.com/plak3com/plak3/internal/models/entities"
 	"github.com/plak3com/plak3/internal/models/searchmodels"
 	"github.com/plak3com/plak3/internal/services"
 	"github.com/valyala/fasthttp"
 )
 
 type Plak3UserHandlers struct {
-	svc services.Plak3UserService
+	svc *services.Plak3UserService
 }
 
-func NewPlak3UserHandlers(_svc services.Plak3UserService) *Plak3UserHandlers {
+func NewPlak3UserHandlers(_svc *services.Plak3UserService) *Plak3UserHandlers {
 	return &Plak3UserHandlers{svc: _svc}
 }
 
@@ -26,7 +26,7 @@ func NewPlak3UserHandlers(_svc services.Plak3UserService) *Plak3UserHandlers {
 // @Success 200 {array} models.PlakUser
 // @Router /users [get]
 func (s *Plak3UserHandlers) List(ctx *fasthttp.RequestCtx) {
-	user := []models.PlakUser{}
+	user := []entities.PlakUser{}
 
 	ctx.SetStatusCode(fasthttp.StatusOK)
 	ctx.SetContentType("application/json")
@@ -42,7 +42,7 @@ func (s *Plak3UserHandlers) List(ctx *fasthttp.RequestCtx) {
 // @Success 200 {object} models.PlakUser
 // @Router /user/find [get]
 func (s *Plak3UserHandlers) Find(ctx *fasthttp.RequestCtx) {
-	user := models.PlakUser{}
+	user := entities.PlakUser{}
 
 	ctx.SetStatusCode(fasthttp.StatusOK)
 	ctx.SetContentType("application/json")
@@ -71,7 +71,7 @@ func (s *Plak3UserHandlers) Search(ctx *fasthttp.RequestCtx) {
 
 	users, err := s.svc.Search(criteria)
 	if err != nil {
-		ctx.Error("Internal Server Error", fasthttp.StatusInternalServerError)
+		ctx.Error("pkg Server Error", fasthttp.StatusInternalServerError)
 		return
 	}
 
@@ -94,7 +94,7 @@ func (s *Plak3UserHandlers) Search(ctx *fasthttp.RequestCtx) {
 // @Success 201 {object} models.PlakUser
 // @Router /user/create [post]
 func (s *Plak3UserHandlers) Create(ctx *fasthttp.RequestCtx) {
-	user := models.PlakUser{}
+	user := entities.PlakUser{}
 
 	ctx.SetStatusCode(fasthttp.StatusCreated)
 	ctx.SetContentType("application/json")
@@ -110,7 +110,7 @@ func (s *Plak3UserHandlers) Create(ctx *fasthttp.RequestCtx) {
 // @Success 201 {string} string "Updated"
 // @Router /user/update [put]
 func (s *Plak3UserHandlers) Update(ctx *fasthttp.RequestCtx) {
-	user := models.PlakUser{}
+	user := entities.PlakUser{}
 
 	ctx.SetStatusCode(fasthttp.StatusCreated)
 	ctx.SetContentType("application/json")
@@ -126,7 +126,7 @@ func (s *Plak3UserHandlers) Update(ctx *fasthttp.RequestCtx) {
 // @Success 200 {string} string "Deleted"
 // @Router /user/remove [delete]
 func (r *Plak3UserHandlers) Remove(ctx *fasthttp.RequestCtx) {
-	user := models.PlakUser{}
+	user := entities.PlakUser{}
 
 	ctx.SetStatusCode(fasthttp.StatusOK)
 	ctx.SetContentType("application/json")
