@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -161,4 +160,3 @@ func (r *Plak3UserRepository) Save(u views.PlakUser) (views.PlakUser, error) {
 
 	return u, tx.Commit()
 }
-
