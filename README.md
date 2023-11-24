@@ -14,7 +14,24 @@ your_project/
 └── Build
 └── Tests
 
+Description of Each Directory
+cmd/app/main.go: This is the entry point of your application. It should initialize and start your web server, and tie together different parts of your application.
 
+internal/handlers: This directory will contain your HTTP handlers. Each handler will process HTTP requests and prepare HTTP responses.
+
+internal/models: Here, you define data structures that represent your business model. For example, a User struct for a user management system.
+
+internal/repositories: Repositories are used for database interactions. You'll implement functions here to create, read, update, and delete records from your database.
+
+internal/routes: This directory will contain route definitions. Here, you'll map URLs to their corresponding handlers.
+
+internal/services: The services layer contains business logic. It acts as an intermediary between your handlers and repositories.
+
+go.mod: This file manages your project's dependencies.
+
+Build: This directory can contain scripts or configuration files needed for building your application.
+
+Tests: Here, you'll write tests for your application. Organize them to mirror the structure of your internal directory for clarity.
 
 write web application in golang using fasthttp
 

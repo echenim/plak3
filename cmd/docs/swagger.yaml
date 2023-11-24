@@ -1,21 +1,30 @@
 basePath: /api/v1
 definitions:
-  models.PlakUser:
+  searchmodels.UserSearchCriteria:
     properties:
       Id:
         type: integer
-      createdAt:
-        type: string
       email:
         type: string
       firstName:
         type: string
       lastName:
         type: string
-      updatedAt:
-        type: string
     type: object
-  searchmodels.UserSearchCriteria:
+  views.PlakUser:
+    properties:
+      Id:
+        type: integer
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
     type: object
 host: localhost:8080
 info:
@@ -32,7 +41,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.PlakUser'
+            $ref: '#/definitions/views.PlakUser'
       summary: Add a new user
       tags:
       - users
@@ -47,7 +56,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.PlakUser'
+            $ref: '#/definitions/views.PlakUser'
       summary: Get a user
       tags:
       - users
@@ -85,7 +94,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.PlakUser'
+              $ref: '#/definitions/views.PlakUser'
             type: array
         "400":
           description: Bad Request
@@ -125,7 +134,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.PlakUser'
+              $ref: '#/definitions/views.PlakUser'
             type: array
       summary: List users
       tags:

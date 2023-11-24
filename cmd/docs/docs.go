@@ -32,7 +32,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.PlakUser"
+                            "$ref": "#/definitions/views.PlakUser"
                         }
                     }
                 }
@@ -55,7 +55,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.PlakUser"
+                            "$ref": "#/definitions/views.PlakUser"
                         }
                     }
                 }
@@ -114,7 +114,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.PlakUser"
+                                "$ref": "#/definitions/views.PlakUser"
                             }
                         }
                     },
@@ -175,7 +175,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.PlakUser"
+                                "$ref": "#/definitions/views.PlakUser"
                             }
                         }
                     }
@@ -184,14 +184,28 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.PlakUser": {
+        "searchmodels.UserSearchCriteria": {
             "type": "object",
             "properties": {
                 "Id": {
                     "type": "integer"
                 },
-                "createdAt": {
+                "email": {
                     "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                }
+            }
+        },
+        "views.PlakUser": {
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "integer"
                 },
                 "email": {
                     "type": "string"
@@ -202,13 +216,13 @@ const docTemplate = `{
                 "lastName": {
                     "type": "string"
                 },
-                "updatedAt": {
-                    "type": "string"
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
-        },
-        "searchmodels.UserSearchCriteria": {
-            "type": "object"
         }
     },
     "securityDefinitions": {

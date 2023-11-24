@@ -6,11 +6,11 @@ DIR := $(HOME)/plak3-data
 all: up
 
 # Start all services
-up:
+start:
 	@[ -d "$(DIR)" ] || mkdir -p "$(DIR)" && cd docker && cd postgres && docker-compose up -d
 
 # Stop all services
-down:
+stop:
 	cd docker && cd postgres && docker-compose down
 
 # Rebuild and start all services
@@ -32,6 +32,12 @@ clean:
 swagger-docs:
 	swag init -g cmd/app/main.go -o cmd/docs 
 
+migrate:
+	goose -dir db/migrations postgres "host=10.0.0.78 user=postgres password=nopassword dbname=fms sslmode=disable" up
+
+# Stop and remove all containers, networks, and volumes
+migrate-delete:
+	goose -dir db/migrations postgres "host=10.0.0.78 user=postgres password=nopassword dbname=fms sslmode=disable" down
 
 
-.PHONY: up down rebuild logs psql clean swagger-docs
+.PHONY: start stop rebuild logs psql clean swagger-docs migrate-d migrate-u

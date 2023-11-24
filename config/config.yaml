@@ -1,0 +1,3 @@
+database:
+  driver: "pgx"
+  dataSourceName: "host=10.0.0.78 user=postgres password=nopassword dbname=fms sslmode=disable"

@@ -31,7 +31,7 @@ func (s *Server) SetUpRoutes() *router.Router {
 	r.GET("/api/v1/user", s.userHandler.List)
 
 	// Register find by id methods
-	r.GET("/api/v1/user/:id", s.userHandler.Find)
+	r.GET("/api/v1/user/{id}", s.userHandler.Find)
 
 	// Register all Post methods
 	r.POST("/api/v1/user/add", s.userHandler.Create)
@@ -42,7 +42,7 @@ func (s *Server) SetUpRoutes() *router.Router {
 	r.POST("/api/v1/user/edit", s.userHandler.Update)
 
 	// Register all Delete methods
-	r.DELETE("/api/v1/user/remove", s.userHandler.Remove)
+	r.DELETE("/api/v1/user/remove/{id}", s.userHandler.Remove)
 
 	return r
 }

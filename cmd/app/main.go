@@ -4,12 +4,8 @@ import (
 	"log"
 
 	"github.com/plak3com/plak3/cmd/docs"
-	"github.com/plak3com/plak3/internal/handlers"
-	"github.com/plak3com/plak3/internal/repositories"
 	"github.com/plak3com/plak3/internal/routes"
-	"github.com/plak3com/plak3/internal/services"
 	"github.com/valyala/fasthttp"
-	"go.uber.org/dig"
 )
 
 // @host localhost:8080
@@ -46,26 +42,10 @@ import (
 // @x-extension-openapi {"example": "value on a json format"}
 func main() {
 	setupSwagger()
-	// container := &buildContainer()
 
-	container := dig.New()
+	initializeConfig()
 
-	// Provide the database connection
-
-	// Provide repositories
-	container.Provide(repositories.NewPlak3UserRepository)
-	container.Provide(repositories.NewPlak3UserSignInRepository)
-
-	// Provide services
-	container.Provide(services.NewPlak3UserService)
-	container.Provide(services.NewPlak3UserSignInService)
-
-	// Provide handler
-	container.Provide(handlers.NewPlak3UserHandlers)
-	container.Provide(handlers.NewPlak3UserSignInHandlers)
-
-	// Provide routes
-	container.Provide(routes.NewRoutes)
+	container := buildContainer()
 
 	// Invoke the server start using the dependencies
 	err := container.Invoke(func(server *routes.Server) {

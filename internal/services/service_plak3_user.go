@@ -1,10 +1,8 @@
 package services
 
 import (
-	"context"
-
-	"github.com/plak3com/plak3/internal/models/entities"
 	"github.com/plak3com/plak3/internal/models/searchmodels"
+	"github.com/plak3com/plak3/internal/models/views"
 	"github.com/plak3com/plak3/internal/repositories"
 )
 
@@ -16,26 +14,26 @@ func NewPlak3UserService(_repo *repositories.Plak3UserRepository) *Plak3UserServ
 	return &Plak3UserService{repo: _repo}
 }
 
-func (s *Plak3UserService) Get(ctx context.Context) ([]entities.PlakUser, error) {
-	return s.repo.Get(ctx)
+func (s *Plak3UserService) Get() ([]views.PlakUser, error) {
+	return s.repo.Get()
 }
 
-func (s *Plak3UserService) FindById(ctx context.Context) (entities.PlakUser, error) {
-	return s.repo.Find(ctx)
+func (s *Plak3UserService) Find(idParam int64) (views.PlakUser, error) {
+	return s.repo.Find(idParam)
 }
 
-func (s *Plak3UserService) Search(param searchmodels.UserSearchCriteria) ([]entities.PlakUser, error) {
+func (s *Plak3UserService) Search(param searchmodels.UserSearchCriteria) ([]views.PlakUser, bool, error) {
 	return s.repo.Search(param)
 }
 
-func (s *Plak3UserService) Save(ctx context.Context) (entities.PlakUser, error) {
-	return s.repo.Save(ctx)
+func (s *Plak3UserService) Save(u views.PlakUser) (views.PlakUser, error) {
+	return s.repo.Save(u)
 }
 
-func (s *Plak3UserService) Edit(ctx context.Context) (entities.PlakUser, error) {
-	return s.repo.Edit(ctx)
+func (s *Plak3UserService) Edit(u views.PlakUser) (views.PlakUser, error) {
+	return s.repo.Edit(u)
 }
 
-func (r *Plak3UserService) Remove(ctx context.Context) error {
-	return r.repo.Remove(ctx)
+func (r *Plak3UserService) Remove(idParam int64) error {
+	return r.repo.Remove(idParam)
 }
