@@ -21,7 +21,7 @@ func (r *Plak3UserRolesRepository) Find(user_id int64) ([]views.Plak3UserRoles, 
 	var results []views.Plak3UserRoles
 
 	// SQL query to select  by userID
-	query := "SELECT role_id, role_name,user_id FROM view_plak_user_roles WHERE user_id = " + strconv.Itoa(int(user_id))
+	query := "SELECT role_id, role_name,user_id,  FROM view_plak_user_roles WHERE user_id = " + strconv.Itoa(int(user_id))
 
 	// Execute the query
 	rows, err := r.db.Query(query)
@@ -46,8 +46,6 @@ func (r *Plak3UserRolesRepository) Find(user_id int64) ([]views.Plak3UserRoles, 
 
 	return results, nil
 }
-
-
 
 func (r *Plak3UserRolesRepository) Save(u views.Plak3UserAndRoles) error {
 	err := r.remove(u.UserId)

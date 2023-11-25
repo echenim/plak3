@@ -27,22 +27,18 @@ func (s *Server) SetUpRoutes() *router.Router {
 	// Register Swagger API routes
 	r.GET("/{filepath:*}", fasthttpadaptor.NewFastHTTPHandlerFunc(httpSwagger.WrapHandler))
 
-	// Register all Get methods
-	r.GET("/api/v1/user", s.userHandler.List)
+	// user login managment routes
+	r.POST("/api/v1/login", s.userSigninHandler.LoginIn)
 
-	// Register find by id methods
-	r.GET("/api/v1/user/{id}", s.userHandler.Find)
-
-	// Register all Post methods
-	r.POST("/api/v1/user/add", s.userHandler.Create)
-	r.POST("/api/v1/user/search", s.userHandler.Search)
-	r.POST("/api/v1/user/signin", s.userSigninHandler.SignIn)
-
-	// Register all Update methods
-	r.POST("/api/v1/user/edit", s.userHandler.Update)
+	// user management routes
+	r.GET("/api/v1/users", s.userHandler.List)
+	r.POST("/api/v1/users", s.userHandler.Create)
+	r.GET("/api/v1/users/{id}", s.userHandler.Find)
+	r.PUT("/api/v1/users/{id}", s.userHandler.Update)
+	r.DELETE("/api/v1/users/{id}", s.userHandler.Remove)
+	r.POST("/api/v1/users/search", s.userHandler.Search)
 
 	// Register all Delete methods
-	r.DELETE("/api/v1/user/remove/{id}", s.userHandler.Remove)
 
 	return r
 }

@@ -5,7 +5,8 @@ CREATE OR REPLACE VIEW view_plak_user_roles AS
 SELECT 
     u.id AS user_id,  
     r.id AS role_id, 
-    r.name AS role_name
+    r.name AS role_name,
+    r.description AS role_description
 FROM 
     plak_user_roles ur
 INNER JOIN 
@@ -18,5 +19,5 @@ INNER JOIN
 
 -- +goose Down
 -- +goose StatementBegin
-SELECT 'down SQL query';
+DROP VIEW IF EXISTS view_plak_user_roles;
 -- +goose StatementEnd

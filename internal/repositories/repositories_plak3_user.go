@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -18,11 +19,11 @@ func NewPlak3UserRepository(_db *sql.DB) *Plak3UserRepository {
 	return &Plak3UserRepository{db: _db}
 }
 
-func (r *Plak3UserRepository) Get() ([]views.PlakUser, error) {
-	var users []views.PlakUser
+func (r *Plak3UserRepository) Get() ([]views.PlakViewUser, error) {
+	var users []views.PlakViewUser
 
 	// SQL query to select all users
-	query := "SELECT id, first_name,last_name, email FROM plak_users"
+	query := "SELECT * FROM view_plak_user_details"
 
 	// Execute the query
 	rows, err := r.db.Query(query)
@@ -33,18 +34,16 @@ func (r *Plak3UserRepository) Get() ([]views.PlakUser, error) {
 
 	// Iterate over the rows and scan each row into a PlakUser struct
 	for rows.Next() {
-		var user views.PlakUser
-		if err := rows.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email); err != nil {
+		var user views.PlakViewUser
+		var rolesJSON string
+		if err := rows.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email, &rolesJSON); err != nil {
+			return nil, err
+		}
+		if err = json.Unmarshal([]byte(rolesJSON), &user.Roles); err != nil {
 			return nil, err
 		}
 		users = append(users, user)
 	}
-
-	// Check for any errors encountered during iteration
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
 	return users, nil
 }
 
@@ -154,9 +153,38 @@ func (r *Plak3UserRepository) Save(u views.PlakUser) (views.PlakUser, error) {
 
 	// Save roles
 	if err := addUserToRoles(tx, nu); err != nil {
+
+		tx.Rollback()
+		return u, err
+	}
+
+	if err := createUserSignIn(tx, nu.ID, u); err != nil {
 		tx.Rollback()
 		return u, err
 	}
 
 	return u, tx.Commit()
+}
+
+func (r *Plak3UserRepository) FindUserAndRoles(idparam int64) (views.PlakViewUser, error) {
+	var user views.PlakViewUser
+
+	// SQL query to select the user by ID
+	query := "SELECT id, first_name,last_name, email FROM plak_users WHERE id = $1"
+
+	// Execute the query
+	row := r.db.QueryRow(query, idparam)
+	err := row.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			// Optional: return a custom error indicating that no user was found
+			return views.PlakViewUser{}, err
+		}
+		// Return the error encountered during query execution or scanning
+		return views.PlakViewUser{}, err
+	}
+
+	user.Roles = findUserRoles(r.db, user.ID)
+
+	return user, nil
 }

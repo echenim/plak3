@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 
 	"github.com/plak3com/plak3/internal/models/searchmodels"
@@ -18,14 +19,14 @@ func NewPlak3UserHandlers(_svc *services.Plak3UserService) *Plak3UserHandlers {
 	return &Plak3UserHandlers{svc: _svc}
 }
 
-
-// List gets a list of users.
-// @Summary List users
-// @Description Retrieves a list of users.
+// List godoc
+// @Summary List all users
+// @Description get users
 // @Tags users
-// @Accept  json
-// @Produce  json
-// @Success 200 {array} views.PlakUser
+// @Accept json
+// @Produce json
+// @Success 200 {array} views.PlakViewUser
+// @Failure 500 {array} views.PlakViewUser
 // @Router /users [get]
 func (s *Plak3UserHandlers) List(ctx *fasthttp.RequestCtx) {
 	user, err := s.svc.Get()
@@ -48,14 +49,18 @@ func (s *Plak3UserHandlers) List(ctx *fasthttp.RequestCtx) {
 	}
 }
 
-// Find gets a user.
-// @Summary Get a user
-// @Description Get details of a specific user
+// Find godoc
+// @Summary Find a user by ID
+// @Description Retrieves a user based on their ID.
 // @Tags users
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} views.PlakUser
-// @Router /user/find [get]
+// @Param id path int true "User ID"
+// @Success 200 {object} views.PlakViewUser "Successfully retrieved the user"
+// @Failure 400 {object} views.PlakViewUser "Invalid user ID"
+// @Failure 404 {object} views.PlakViewUser "User not found"
+// @Failure 500 {object} views.PlakViewUser "Internal Server Error"
+// @Router /users/{id} [get]
 func (s *Plak3UserHandlers) Find(ctx *fasthttp.RequestCtx) {
 	id, err := strconv.Atoi(ctx.UserValue("id").(string))
 	if err != nil {
@@ -82,17 +87,18 @@ func (s *Plak3UserHandlers) Find(ctx *fasthttp.RequestCtx) {
 	}
 }
 
-// Search finds users based on criteria.
-// @Summary Search users
-// @Description Search for users based on criteria
+// Search finds users based on search criteria
+// @Summary Search for users
+// @Description Searches for users based on various criteria like ID, first name, last name, and email.
 // @Tags users
-// @Accept  json
-// @Produce  json
-// @Param   criteria  body    searchmodels.UserSearchCriteria true  "Search Criteria"
-// @Success 200 {array} views.PlakUser
-// @Failure 400 {string} string "Bad Request"
-// @Failure 404 {string} string "Not Found"
-// @Router /user/search [post]
+// @Accept json
+// @Produce json
+// @Param searchmodels.UserSearchCriteria body searchmodels.UserSearchCriteria true "Search Criteria"
+// @Success 200 {array} views.PlakViewUser "List of users matching criteria"
+// @Failure 400 {array} views.PlakViewUser "Bad Request"
+// @Failure 404 {array} views.PlakViewUser "Not Found"
+// @Failure 500 {array} views.PlakViewUser "Internal Server Error"
+// @Router /users/search [post]
 func (s *Plak3UserHandlers) Search(ctx *fasthttp.RequestCtx) {
 	var criteria searchmodels.UserSearchCriteria
 
@@ -127,14 +133,17 @@ func (s *Plak3UserHandlers) Search(ctx *fasthttp.RequestCtx) {
 	}
 }
 
-// Create adds a new user.
-// @Summary Add a new user
-// @Description Create a new user
+// Create a new user
+// @Summary Create a new user
+// @Description Adds a new user to the system
 // @Tags users
 // @Accept  json
 // @Produce  json
-// @Success 201 {object} views.PlakUser
-// @Router /user/create [post]
+// @Param user body views.PlakUser true "User to create"
+// @Success 201 {object} views.PlakUser "User created successfully"
+// @Failure 400 {object} views.PlakUser "Invalid user data"
+// @Failure 500 {object} views.PlakUser "Internal Server Error"
+// @Router /users [post]
 func (s *Plak3UserHandlers) Create(ctx *fasthttp.RequestCtx) {
 	var newUser views.PlakUser
 	if err := json.Unmarshal(ctx.PostBody(), &newUser); err != nil {
@@ -148,7 +157,7 @@ func (s *Plak3UserHandlers) Create(ctx *fasthttp.RequestCtx) {
 	// Save the user using the service
 	user, err := s.svc.Save(newUser)
 	if err != nil {
-		// Handle error from the Save method
+		fmt.Printf("\nError saving user: %v\n", err)
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		ctx.SetContentType("application/json")
 		json.NewEncoder(ctx).Encode(map[string]string{"error": "Failed to save user"})
@@ -165,14 +174,19 @@ func (s *Plak3UserHandlers) Create(ctx *fasthttp.RequestCtx) {
 	}
 }
 
-// Update modifies a user.
-// @Summary Update a user
-// @Description Update an existing user's details
+// Update updates a user's information
+// @Summary Update user information
+// @Description Update user information based on provided data
 // @Tags users
-// @Accept  json
-// @Produce  json
-// @Success 201 {string} string "Updated"
-// @Router /user/update [put]
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Param user body views.PlakUser true "User Data"
+// @Success 200 {object} views.PlakUser "Successfully updated user"
+// @Failure 400 {object} views.PlakUser "Invalid user data"
+// @Failure 404 {object} views.PlakUser "User not found"
+// @Failure 500 {object} views.PlakUser "Internal server error"
+// @Router /users/{id} [put]
 func (s *Plak3UserHandlers) Update(ctx *fasthttp.RequestCtx) {
 	// id, err := strconv.Atoi(ctx.UserValue("id").(string))
 	// if err != nil {
@@ -198,7 +212,7 @@ func (s *Plak3UserHandlers) Update(ctx *fasthttp.RequestCtx) {
 		return
 	}
 	// Save the user using the service
-	user, err := s.svc.Edit(updateUser)
+	user, err := s.svc.EditUser(updateUser)
 	if err != nil {
 		// Handle error from the Save method
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
@@ -217,14 +231,18 @@ func (s *Plak3UserHandlers) Update(ctx *fasthttp.RequestCtx) {
 	}
 }
 
-// Remove deletes a user.
-// @Summary Delete a user
-// @Description Delete a user's account
+// Remove removes a user by ID
+// @Summary Remove a user
+// @Description Remove a user by ID
 // @Tags users
-// @Accept  json
-// @Produce  json
-// @Success 200 {string} string "Deleted"
-// @Router /user/remove [delete]
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {object} map[string]string "message: User removed successfully"
+// @Failure 400 {object} map[string]string "error: Invalid user ID"
+// @Failure 404 {object} map[string]string "error: User not found"
+// @Failure 500 {object} map[string]string "error: Failed to remove user"
+// @Router /users/{id} [delete]
 func (s *Plak3UserHandlers) Remove(ctx *fasthttp.RequestCtx) {
 	id, err := strconv.Atoi(ctx.UserValue("id").(string))
 	if err != nil {

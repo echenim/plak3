@@ -1,6 +1,7 @@
 basePath: /api/v1
 definitions:
   searchmodels.UserSearchCriteria:
+    description: User model.
     properties:
       Id:
         type: integer
@@ -11,7 +12,61 @@ definitions:
       lastName:
         type: string
     type: object
+  views.Plak3Login:
+    description: login model.
+    properties:
+      password:
+        type: string
+      userName:
+        type: string
+    type: object
+  views.Plak3Roles:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  views.Plak3SignedInUser:
+    description: login response model.
+    properties:
+      authorization:
+        items:
+          $ref: '#/definitions/views.Plak3Roles'
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+      userName:
+        type: string
+    type: object
   views.PlakUser:
+    description: User model.
+    properties:
+      Id:
+        type: integer
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      lockoutEnabled:
+        type: boolean
+      password:
+        type: string
+      phoneNumber:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+    type: object
+  views.PlakViewUser:
+    description: User model.
     properties:
       Id:
         type: integer
@@ -23,67 +78,216 @@ definitions:
         type: string
       roles:
         items:
-          type: string
+          $ref: '#/definitions/views.Plak3Roles'
         type: array
     type: object
 host: localhost:8080
 info:
   contact: {}
 paths:
-  /user/create:
+  /login:
     post:
       consumes:
       - application/json
-      description: Create a new user
+      description: Logs in a user and returns user information.
+      parameters:
+      - description: Login information
+        in: body
+        name: views.Plak3Login
+        required: true
+        schema:
+          $ref: '#/definitions/views.Plak3Login'
       produces:
       - application/json
       responses:
-        "201":
-          description: Created
+        "200":
+          description: Successfully logged in
           schema:
-            $ref: '#/definitions/views.PlakUser'
-      summary: Add a new user
+            $ref: '#/definitions/views.Plak3SignedInUser'
+        "400":
+          description: Bad request
+          schema:
+            $ref: '#/definitions/views.Plak3SignedInUser'
+        "401":
+          description: Invalid login credentials
+          schema:
+            $ref: '#/definitions/views.Plak3SignedInUser'
+      summary: User login
       tags:
-      - users
-  /user/find:
+      - authenticate & authorization
+  /users:
     get:
       consumes:
       - application/json
-      description: Get details of a specific user
+      description: get users
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/views.PlakUser'
-      summary: Get a user
+            items:
+              $ref: '#/definitions/views.PlakViewUser'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            items:
+              $ref: '#/definitions/views.PlakViewUser'
+            type: array
+      summary: List all users
       tags:
       - users
-  /user/remove:
+    post:
+      consumes:
+      - application/json
+      description: Adds a new user to the system
+      parameters:
+      - description: User to create
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/views.PlakUser'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: User created successfully
+          schema:
+            $ref: '#/definitions/views.PlakUser'
+        "400":
+          description: Invalid user data
+          schema:
+            $ref: '#/definitions/views.PlakUser'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/views.PlakUser'
+      summary: Create a new user
+      tags:
+      - users
+  /users/{id}:
     delete:
       consumes:
       - application/json
-      description: Delete a user's account
+      description: Remove a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
         "200":
-          description: Deleted
+          description: 'message: User removed successfully'
           schema:
-            type: string
-      summary: Delete a user
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'error: Invalid user ID'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: 'error: User not found'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: 'error: Failed to remove user'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Remove a user
       tags:
       - users
-  /user/search:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a user based on their ID.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved the user
+          schema:
+            $ref: '#/definitions/views.PlakViewUser'
+        "400":
+          description: Invalid user ID
+          schema:
+            $ref: '#/definitions/views.PlakViewUser'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/views.PlakViewUser'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/views.PlakViewUser'
+      summary: Find a user by ID
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update user information based on provided data
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/views.PlakUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated user
+          schema:
+            $ref: '#/definitions/views.PlakUser'
+        "400":
+          description: Invalid user data
+          schema:
+            $ref: '#/definitions/views.PlakUser'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/views.PlakUser'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/views.PlakUser'
+      summary: Update user information
+      tags:
+      - users
+  /users/search:
     post:
       consumes:
       - application/json
-      description: Search for users based on criteria
+      description: Searches for users based on various criteria like ID, first name,
+        last name, and email.
       parameters:
       - description: Search Criteria
         in: body
-        name: criteria
+        name: searchmodels.UserSearchCriteria
         required: true
         schema:
           $ref: '#/definitions/searchmodels.UserSearchCriteria'
@@ -91,52 +295,30 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: List of users matching criteria
           schema:
             items:
-              $ref: '#/definitions/views.PlakUser'
+              $ref: '#/definitions/views.PlakViewUser'
             type: array
         "400":
           description: Bad Request
           schema:
-            type: string
+            items:
+              $ref: '#/definitions/views.PlakViewUser'
+            type: array
         "404":
           description: Not Found
           schema:
-            type: string
-      summary: Search users
-      tags:
-      - users
-  /user/update:
-    put:
-      consumes:
-      - application/json
-      description: Update an existing user's details
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Updated
-          schema:
-            type: string
-      summary: Update a user
-      tags:
-      - users
-  /users:
-    get:
-      consumes:
-      - application/json
-      description: Retrieves a list of users.
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
+            items:
+              $ref: '#/definitions/views.PlakViewUser'
+            type: array
+        "500":
+          description: Internal Server Error
           schema:
             items:
-              $ref: '#/definitions/views.PlakUser'
+              $ref: '#/definitions/views.PlakViewUser'
             type: array
-      summary: List users
+      summary: Search for users
       tags:
       - users
 securityDefinitions:

@@ -14,7 +14,7 @@ func NewPlak3UserService(_repo *repositories.Plak3UserRepository) *Plak3UserServ
 	return &Plak3UserService{repo: _repo}
 }
 
-func (s *Plak3UserService) Get() ([]views.PlakUser, error) {
+func (s *Plak3UserService) Get() ([]views.PlakViewUser, error) {
 	return s.repo.Get()
 }
 
@@ -30,8 +30,12 @@ func (s *Plak3UserService) Save(u views.PlakUser) (views.PlakUser, error) {
 	return s.repo.Save(u)
 }
 
-func (s *Plak3UserService) Edit(u views.PlakUser) (views.PlakUser, error) {
+func (s *Plak3UserService) EditUser(u views.PlakUser) (views.PlakUser, error) {
 	return s.repo.Edit(u)
+}
+
+func (s *Plak3UserService) EditUserRole(u views.PlakUser) (views.PlakViewUser, error) {
+	return s.repo.FindUserAndRoles(u.ID)
 }
 
 func (r *Plak3UserService) Remove(idParam int64) error {
