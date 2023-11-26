@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/fasthttp/router"
 	"github.com/plak3com/plak3/internal/handlers"
+	"github.com/plak3com/plak3/internal/utils/securities"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"github.com/valyala/fasthttp/fasthttpadaptor"
 )
@@ -31,8 +32,8 @@ func (s *Server) SetUpRoutes() *router.Router {
 	r.POST("/api/v1/login", s.userSigninHandler.LoginIn)
 
 	// user management routes
-	r.GET("/api/v1/users", s.userHandler.List)
-	r.POST("/api/v1/users", s.userHandler.Create)
+	r.GET("/api/v1/users", securities.AuthMiddleware(s.userHandler.List))
+	r.POST("/api/v1/users", securities.AuthMiddleware(s.userHandler.Create))
 	r.GET("/api/v1/users/{id}", s.userHandler.Find)
 	r.PUT("/api/v1/users/{id}", s.userHandler.Update)
 	r.DELETE("/api/v1/users/{id}", s.userHandler.Remove)

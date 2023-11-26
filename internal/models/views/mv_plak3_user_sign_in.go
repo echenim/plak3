@@ -26,17 +26,17 @@ type Plak3Login struct {
 // @Description login response model.
 // @Name Plak3SignedInUser
 type Plak3SignedInUser struct {
-	Id                   int64  `json:"id"`
-	Name                 string `json:"name"`
-	UserName             string `json:"user_name"`
-	Email                string `json:"email"`
-	PasswordHash         string `json:"password_hash"`
-	EmailConfirmed       bool   `json:"email_confirmed"`
-	PhoneNumberConfirmed bool   `json:"phone_number_confirmed"`
-	MfaEnabled           bool   `json:"mfa_enabled"`
-	LockedOut            bool   `json:"lockedout"`
-
-	AuthorizationTo []Plak3Roles `json:"authorization_to,omitempty"`
+	Id                   int64    `json:"id"`
+	Name                 string   `json:"name"`
+	UserName             string   `json:"user_name"`
+	Email                string   `json:"email"`
+	PasswordHash         string   `json:"password_hash"`
+	EmailConfirmed       bool     `json:"email_confirmed"`
+	PhoneNumberConfirmed bool     `json:"phone_number_confirmed"`
+	MfaEnabled           bool     `json:"mfa_enabled"`
+	LockedOut            bool     `json:"lockedout"`
+	SecurityStamp        string   `json:"security_stamp"`
+	AuthorizationTo      []string `json:"authorization_to,omitempty"`
 }
 
 // Plak3LoginUser represents user login

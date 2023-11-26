@@ -98,3 +98,8 @@ curl -X POST -H "Content-Type: application/json" \
 Consider token expiration and renewal strategies
 
 You can expand upon this by adding more sophisticated user management, role-based access control, and other security features as needed
+
+4:58pm
+    "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZXJpYyBkdXNrIiwidXNlcl9pZCI6MTAwMDAwMDAwMDA0LCJlbWFpbCI6IiIsImF1dGhvcml6YXRpb25fdG8iOiJSZWFkIiwic3RhbmRhcmRfY2xhaW1zIjp7ImV4cCI6MTcwMDk2Mzk0NX19.os9KYcdQloXltxjD00F60rQ-LtVorvTzaIuW-VIY8IK0D5cWFm5tyDC6W0CXeiUpwiOmkVIAemuvxWRVZkDxWQ"
+
+    "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZXJpYyBkdXNrIiwidXNlcl9pZCI6MTAwMDAwMDAwMDA0LCJlbWFpbCI6IiIsImF1dGhvcml6YXRpb25fdG8iOiJSZWFkIiwic3RhbmRhcmRfY2xhaW1zIjp7ImV4cCI6MTcwMDk2Mzk5N319.CrSZuBaezFhyvmdulcoogAQ3iOAllHwOQdbnDj8mSo3adxfRKHvA8VV_btdFPfaAkEHKImyDZp9Op7YOzkRspA"
