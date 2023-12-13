@@ -11,6 +11,26 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type Plak3UserOnBoardingRepository struct {
+	db *sql.DB
+}
+
+func NewPlak3UserOnBoardingRepository(_db *sql.DB) *Plak3UserOnBoardingRepository {
+	return &Plak3UserOnBoardingRepository{db: _db}
+}
+
+// public functions
+func (r *Plak3UserOnBoardingRepository) UserRegistrations(u views.PlakUserOnBoarding) error {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit()
+}
+
+// Private functions
+
 func saveUser(tx *sql.Tx, u views.PlakUser) (views.PlakUser, error) {
 	// SQL statement to insert a new user
 	query := `INSERT INTO plak_users (first_name,last_name,email) VALUES ($1, $2,$3) RETURNING id`

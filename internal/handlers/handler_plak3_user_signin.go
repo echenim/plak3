@@ -13,6 +13,7 @@ import (
 	"github.com/plak3com/plak3/internal/models/entities"
 	"github.com/plak3com/plak3/internal/models/views"
 	"github.com/plak3com/plak3/internal/services"
+	"github.com/plak3com/plak3/internal/utils/securities"
 	"github.com/valyala/fasthttp"
 )
 
@@ -61,7 +62,7 @@ func (s *Plak3UserSignInHandlers) LoginIn(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	token, err := generateUserTokenAfterLoginWasSuccessful(user.SignedInUser)
+	token, err := securities.GenerateUserTokenAfterLoginWasSuccessful(user.SignedInUser)
 	if err != nil {
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
 		ctx.SetContentType("application/json")

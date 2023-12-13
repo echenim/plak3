@@ -1,9 +1,8 @@
-package securities
+package authentication
 
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -11,26 +10,6 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-var jwtKey = []byte("aa3d118b-d505-482c-85c4-3cfa47d1ef45")
-
-const TokenExpiryDuration = 1 * time.Hour
-const (
-	authHeader      = "Authorization"
-	bearerPrefix    = "Bearer "
-	contentTypeJSON = "application/json"
-	userIDKey       = "User_id"
-	tokenHeader     = "Token"
-)
-
-type claims struct {
-	UserId             int64    `json:"user_id"`
-	Name               string   `json:"name"`
-	Email              string   `json:"email"`
-	AuthorizationTo    []string `json:"roles"`
-	jwt.StandardClaims `json:"standard_claims"`
-}
-
-// VerifyToken verifies the JWT token and returns the claims.
 func VerifyToken(tokenString string) (*claims, error) {
 	claims := &claims{}
 	// Parse the token with claims, directly handling the error.
@@ -91,50 +70,6 @@ func GenerateUserTokenAfterLoginWasSuccessful(u views.Plak3SignedInUser) (string
 	return signedToken, nil
 }
 
-func AuthMiddleware(next fasthttp.RequestHandler) fasthttp.RequestHandler {
-	return func(ctx *fasthttp.RequestCtx) {
-		tokenString, err := extractBearerToken(ctx)
-		if err != nil {
-			sendError(ctx, err.Error(), fasthttp.StatusUnauthorized)
-			return
-		}
-
-		claims, err := VerifyToken(tokenString)
-		if err != nil {
-			sendError(ctx, "Invalid or expired token", fasthttp.StatusUnauthorized)
-			return
-		}
-
-		ctx.SetUserValue(userIDKey, claims.UserId)
-		next(ctx)
-	}
-}
-
-func RoleBaseAuthMiddleware(allowedRole string, next fasthttp.RequestHandler) fasthttp.RequestHandler {
-	return func(ctx *fasthttp.RequestCtx) {
-		tokenString, err := extractBearerToken(ctx)
-		if err != nil {
-			sendError(ctx, err.Error(), fasthttp.StatusUnauthorized)
-			return
-		}
-
-		claims, err := tokenVarifications(tokenString)
-		if err != nil {
-			ctx.Error("Unauthorized", fasthttp.StatusUnauthorized)
-			return
-		}
-
-		userRole := claims.AuthorizationTo
-		if !isAllowedRole(userRole, allowedRole) {
-			sendError(ctx, "Forbidden - User role not authorized", fasthttp.StatusForbidden)
-			return
-		}
-
-		ctx.SetUserValue(userIDKey, claims.UserId)
-		next(ctx)
-	}
-}
-
 func extractBearerToken(ctx *fasthttp.RequestCtx) (string, error) {
 	authToken := string(ctx.Request.Header.Peek(tokenHeader))
 	if authToken == "" {
@@ -146,19 +81,4 @@ func extractBearerToken(ctx *fasthttp.RequestCtx) (string, error) {
 	// }
 	// return strings.TrimPrefix(authToken, bearerPrefix), nil
 	return authToken, nil
-}
-
-func sendError(ctx *fasthttp.RequestCtx, message string, statusCode int) {
-	ctx.SetStatusCode(statusCode)
-	ctx.SetContentType(contentTypeJSON)
-	ctx.Error(message, statusCode)
-}
-
-func isAllowedRole(userRole []string, allowedRoles string) bool {
-	for _, role := range userRole {
-		if strings.TrimSpace(role) == strings.TrimSpace(allowedRoles) {
-			return true
-		}
-	}
-	return false
 }
