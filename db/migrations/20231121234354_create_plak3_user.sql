@@ -2,13 +2,9 @@
 -- +goose StatementBegin
 
 
-CREATE SEQUENCE plak_users_email_sequence
-    AS BIGINT
-    START WITH 10000000000
-    INCREMENT BY 1;
 
 CREATE TABLE plak_user_email (
-    id BIGINT PRIMARY KEY DEFAULT nextval('plak_users_email_sequence'),
+    id TEXT PRIMARY KEY DEFAULT REPLACE(uuid_generate_v4()::text, '-', ''),
     email VARCHAR(255) NOT NULL UNIQUE,
     createdAt TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     lastUpdated TIMESTAMP WITH TIME ZONE
