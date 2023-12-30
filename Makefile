@@ -41,3 +41,7 @@ migrate-delete:
 
 
 .PHONY: start stop rebuild logs psql clean swagger-docs migrate-d migrate-u
+
+
+
+	cd migrations && goose create $(PARAM)
