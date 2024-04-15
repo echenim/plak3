@@ -1,5 +1,7 @@
 # Structure
 
+
+```code
 your_project/
 ├── cmd/
 │   └── app/
@@ -13,6 +15,7 @@ your_project/
 └── go.mod
 └── Build
 └── Tests
+```
 
 Description of Each Directory
 cmd/app/main.go: This is the entry point of your application. It should initialize and start your web server, and tie together different parts of your application.
