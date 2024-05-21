@@ -1,108 +1,92 @@
-# Structure
+# User Management System with FastHTTP
 
+This repository implements a user management system using the FastHTTP framework. Below is a detailed explanation of the available endpoints, including user login management and user management routes.
 
-```code
-your_project/
-├── cmd/
-│   └── app/
-│       └── main.go
-├── 
-│   ├── handlers/
-│   ├── models/
-│   ├── repositories/
-│   ├── routes/
-│   └── services/
-└── go.mod
-└── Build
-└── Tests
-```
+## Endpoints
 
-Description of Each Directory
-cmd/app/main.go: This is the entry point of your application. It should initialize and start your web server, and tie together different parts of your application.
+### User Login Management Routes
 
-internal/handlers: This directory will contain your HTTP handlers. Each handler will process HTTP requests and prepare HTTP responses.
+#### POST `/api/v1/login`
 
-internal/models: Here, you define data structures that represent your business model. For example, a User struct for a user management system.
+This endpoint handles user login.
 
-internal/repositories: Repositories are used for database interactions. You'll implement functions here to create, read, update, and delete records from your database.
+**Handler:** `s.userSigninHandler.LoginIn`
 
-internal/routes: This directory will contain route definitions. Here, you'll map URLs to their corresponding handlers.
+**Description:** This route processes user login requests, verifying credentials and returning a token or session information upon successful authentication.
 
-internal/services: The services layer contains business logic. It acts as an intermediary between your handlers and repositories.
+### User Management Routes
 
-go.mod: This file manages your project's dependencies.
+#### GET `/api/v1/users`
 
-Build: This directory can contain scripts or configuration files needed for building your application.
+This endpoint retrieves a list of users.
 
-Tests: Here, you'll write tests for your application. Organize them to mirror the structure of your internal directory for clarity.
+**Middleware:**
 
-write web application in golang using fasthttp
+- `logging.ErrorLoggingMiddleware`: Logs errors that occur during the request.
+- `authentication.AuthorizationMiddleware("Administrator")`: Authorizes only users with the "Administrator" role.
 
+**Handler:** `s.userHandler.List`
 
-Initialization: Ensure each package is correctly initialized, especially the repository with the database connection.
-Dependency Injection: Pass dependencies (like repositories to services) through function parameters or struct fields.
-Error Handling: Implement robust error handling throughout the application.
-Configuration: Set up configuration for database credentials, server port, etc., potentially using environment variables or a configuration file.
+**Description:** This route returns a list of all users in the system. Only administrators can access this route.
 
+#### POST `/api/v1/users`
 
-Implementing authentication and authorization
+This endpoint creates a new user.
 
+**Handler:** `s.userHandler.Create`
 
-write a web application using fasthttp with authentication
+**Description:** This route handles the creation of a new user. The request should include user details such as name, email, and password.
 
+#### GET `/api/v1/users/{id}`
 
+This endpoint retrieves a user by ID.
 
+**Handler:** `s.userHandler.Find`
 
+**Description:** This route returns the details of a specific user identified by their ID.
 
-implement a user management system with fasthttp
---
-Ensure each package is correctly initialized, especially the repository with the database connection.
+#### PUT `/api/v1/users/{id}`
 
-ensure that the database connection string (dataSourceName) should ideally come from a configuration file
+This endpoint updates a user's information.
 
-implement dependency injection in the  application using uber-go/dig
+**Handler:** `s.userHandler.Update`
 
-now Set up configuration for database credentials, server port, etc., using a configuration file
+**Description:** This route allows for updating user details such as name, email, and role. The user is identified by their ID.
 
-Update your repositories and server start-up to use the provided configuration
+#### DELETE `/api/v1/users/{id}`
 
-add authentication and authorization
+This endpoint deletes a user by ID.
 
+**Handler:** `s.userHandler.Remove`
 
+**Description:** This route handles the deletion of a specific user identified by their ID.
 
+#### POST `/api/v1/users/search`
 
+This endpoint searches for users based on specific criteria.
 
-write a golang web user management application from scratch using fasthttp
+**Handler:** `s.userHandler.Search`
 
-structure the crud application into
-cmd/app/main.go
-handlers
-models
-repositories
-services
-routes
+**Description:** This route allows for searching users by various criteria such as name, email, or role. The search criteria should be included in the request body.
 
+## Middleware
 
-Ensure each package is correctly initialized, especially the repository, services,handler, router and also include setup repository with the database connection
+### Error Logging Middleware
 
-use uber-go/dig as the dependency injection library
+**Middleware:** `logging.ErrorLoggingMiddleware`
 
+**Description:** This middleware logs any errors that occur during the handling of a request. It is used to track and diagnose issues in the application.
 
+### Authorization Middleware
 
-curl -X POST -H "Content-Type: application/json" \
-    -d '{"name":"John", "email":"<john@example.com>"}' \
-    "<http://localhost:8080/searchUser>"
+**Middleware:** `authentication.AuthorizationMiddleware("Administrator")`
 
+**Description:** This middleware ensures that only users with the "Administrator" role can access certain routes. It checks the user's role and either allows the request to proceed or denies access.
 
+## How to Run
 
+1. **Clone the repository:**
 
-
-
-Consider token expiration and renewal strategies
-
-You can expand upon this by adding more sophisticated user management, role-based access control, and other security features as needed
-
-4:58pm
-    "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZXJpYyBkdXNrIiwidXNlcl9pZCI6MTAwMDAwMDAwMDA0LCJlbWFpbCI6IiIsImF1dGhvcml6YXRpb25fdG8iOiJSZWFkIiwic3RhbmRhcmRfY2xhaW1zIjp7ImV4cCI6MTcwMDk2Mzk0NX19.os9KYcdQloXltxjD00F60rQ-LtVorvTzaIuW-VIY8IK0D5cWFm5tyDC6W0CXeiUpwiOmkVIAemuvxWRVZkDxWQ"
-
-    "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiZXJpYyBkdXNrIiwidXNlcl9pZCI6MTAwMDAwMDAwMDA0LCJlbWFpbCI6IiIsImF1dGhvcml6YXRpb25fdG8iOiJSZWFkIiwic3RhbmRhcmRfY2xhaW1zIjp7ImV4cCI6MTcwMDk2Mzk5N319.CrSZuBaezFhyvmdulcoogAQ3iOAllHwOQdbnDj8mSo3adxfRKHvA8VV_btdFPfaAkEHKImyDZp9Op7YOzkRspA"
+   ```bash
+   git clone <repository-url>
+   cd <repository-directory>
